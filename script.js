@@ -26,10 +26,10 @@ async function getWeather() {
         const { main, wind, weather, coord } = weatherData;
         const probabilityRain = weatherData.rain ? (weatherData.rain['1h'] || 0) + '%' : '0%';
         const weatherType = weather[0].main;
-        const backgroundImage = `url('images/${weatherType.toLowerCase()}.jpg')`;
-
-        document.body.style.backgroundImage = backgroundImage;
         
+        // Actualizar el color de fondo según la temperatura
+        updateBackground(main.temp);
+
         document.getElementById('weatherInfo').innerHTML = `
             <h3>${weatherData.name}, ${weatherData.sys.country}</h3>
             <img class="animated-icon" src="icons/${weatherIcons[weatherType] || 'default.svg'}" alt="${weatherType}">
@@ -69,3 +69,19 @@ async function getForecast(lat, lon) {
         alert('Error al obtener la previsión del clima');
     }
 }
+
+// Función para cambiar el color de fondo según la temperatura
+function updateBackground(temp) {
+    const body = document.getElementById('body');
+
+    if (temp <= 10) {
+        body.style.background = 'linear-gradient(to right, #2b5876, #4e4376)'; // Azul frío
+    } else if (temp > 10 && temp <= 20) {
+        body.style.background = 'linear-gradient(to right, #1e3c72, #2a5298)'; // Azul intermedio
+    } else if (temp > 20 && temp <= 30) {
+        body.style.background = 'linear-gradient(to right, #ff9800, #ff5722)'; // Tonos cálidos
+    } else {
+        body.style.background = 'linear-gradient(to right, #d32f2f, #ff5252)'; // Rojo intenso
+    }
+}
+
