@@ -1,6 +1,6 @@
-/* Estilo Fluent Windows 11 - Responsivo */
+/* Estilo Fluent Windows 11 */
 body {
-    background-color: #423b3b;
+    background-color: #1e1e1e;
     color: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
@@ -8,7 +8,6 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    flex-direction: column;
 }
 
 .container {
@@ -18,11 +17,11 @@ body {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
     text-align: center;
     width: 90%;
-    max-width: 400px;
+    max-width: 600px;
 }
 
 input {
-    width: 100%;
+    width: 80%;
     padding: 10px;
     margin: 10px 0;
     border: none;
@@ -70,35 +69,50 @@ p {
     background: rgba(50, 50, 50, 0.8);
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px;
+    white-space: nowrap;
 }
 
 .forecast-day {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
     padding: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(60, 60, 60, 0.8);
+    border-radius: 8px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
 }
 
-.forecast-day:last-child {
-    border-bottom: none;
+.forecast-day:hover {
+    transform: scale(1.1);
 }
 
 .forecast-day p {
-    margin: 0;
+    margin: 5px 0;
     font-size: 14px;
 }
 
-/* Estilos responsivos */
+.wind-direction {
+    display: flex;
+    align-items: center;
+}
+
+.wind-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+}
+
 @media (max-width: 600px) {
+    .forecast {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
     .container {
         width: 95%;
-    }
-    input {
-        font-size: 14px;
-    }
-    button {
-        font-size: 14px;
-        padding: 8px 12px;
     }
 }
