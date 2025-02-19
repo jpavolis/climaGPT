@@ -74,22 +74,28 @@ async function getWeather() {
 // Obtener previsión del clima a 7 días
 async function getForecast(lat, lon) {
     try {
-        const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&cnt=7&units=metric&appid=${apiKey}`;
+        const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
         const forecastResponse = await fetch(forecastUrl);
         const forecastData = await forecastResponse.json();
 
         let forecastHTML = '<h3>Previsión 7 días</h3>';
+        let daysShown = new Set(); // Para evitar días repetidos
+
         forecastData.list.forEach(day => {
             const date = new Date(day.dt * 1000);
-            const dayName = date.toLocaleDateString('es-ES', { weekday: 'long' }); // Mostrar en español
+            const dayName = date.toLocaleDateString('es-ES', { weekday: 'long' });
 
-            forecastHTML += `
-                <div class="forecast-day">
-                    <p>${dayName.charAt(0).toUpperCase() + dayName.slice(1)}</p>
-                    <p>${day.main.temp}°C</p>
-                    <img src="icons/${weatherIcons[day.weather[0].main] || 'default.svg'}" alt="${day.weather[0].main}" width="40">
-                </div>
-            `;
+            if (!daysShown.has(dayName)) { // Si el día aún no ha sido agregado
+                daysShown.add(dayName);
+
+                forecastHTML += `
+                    <div class="forecast-day">
+                        <p>${dayName.charAt(0).toUpperCase() + dayName.slice(1)}</p>
+                        <p>${day.main.temp}°C</p>
+                        <img src="icons/${weatherIcons[day.weather[0].main] || 'default.svg'}" alt="${day.weather[0].main}" width="40">
+                    </div>
+                `;
+            }
         });
 
         document.getElementById('forecast').innerHTML = forecastHTML;
@@ -97,6 +103,7 @@ async function getForecast(lat, lon) {
         alert('Error al obtener la previsión del clima');
     }
 }
+
 
 // Cambiar fondo según temperatura
 function updateBackground(temp) {
