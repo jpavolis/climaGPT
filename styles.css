@@ -1,4 +1,4 @@
-/* Estilo Fluent Windows 11 */
+/* Estilo Fluent Windows 11 - Responsivo */
 body {
     background-color: #1e1e1e;
     color: #ffffff;
@@ -8,7 +8,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    transition: background 0.5s ease-in-out;
+    flex-direction: column;
 }
 
 .container {
@@ -17,11 +17,12 @@ body {
     border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
     text-align: center;
-    width: 320px;
+    width: 90%;
+    max-width: 400px;
 }
 
 input {
-    width: 80%;
+    width: 100%;
     padding: 10px;
     margin: 10px 0;
     border: none;
@@ -88,25 +89,16 @@ p {
     font-size: 14px;
 }
 
-/* Contenedor de sugerencias */
-.suggestions {
-    background: rgba(255, 255, 255, 0.1);
-    position: absolute;
-    width: 80%;
-    max-height: 150px;
-    overflow-y: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    margin-top: 2px;
-}
-
-.suggestions p {
-    padding: 10px;
-    margin: 0;
-    cursor: pointer;
-    transition: background 0.2s ease-in-out;
-}
-
-.suggestions p:hover {
-    background: rgba(255, 255, 255, 0.2);
+/* Estilos responsivos */
+@media (max-width: 600px) {
+    .container {
+        width: 95%;
+    }
+    input {
+        font-size: 14px;
+    }
+    button {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
 }
