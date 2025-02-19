@@ -1,4 +1,4 @@
-const apiKey = '9ca9e9ad62e2593af164a41fb1774c72'; // Usa tu propia API Key
+const apiKey = '9ca9e9ad62e2593af164a41fb1774c72';
 const weatherIcons = {
     'Clear': 'clear.svg',
     'Clouds': 'clouds.svg',
@@ -8,32 +8,56 @@ const weatherIcons = {
     'Thunderstorm': 'thunderstorm.svg'
 };
 
-// Función para obtener sugerencias de ciudades
+let debounceTimer;
+
+// Función para obtener sugerencias de ciudades con debounce y manejo de errores
 async function getCitySuggestions(query) {
     if (query.length < 3) {
         document.getElementById('suggestions').innerHTML = '';
         return;
     }
 
-    const url = `https://api.openweathermap.org/data/2.5/find?q=${query}&type=like&sort=population&appid=${apiKey}`;
-    const response = await fetch(url);
-    const data = await response.json();
+    try {
+        const url = `https://api.openweathermap.org/data/2.5/find?q=${query}&type=like&sort=population&appid=${apiKey}`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Error en la solicitud');
 
-    let suggestionsHTML = '';
-    data.list.forEach(city => {
-        suggestionsHTML += `<p onclick="selectCity('${city.name}, ${city.sys.country}')">${city.name}, ${city.sys.country}</p>`;
-    });
+        const data = await response.json();
+        const suggestionsElement = document.getElementById('suggestions');
+        suggestionsElement.innerHTML = '';
 
-    document.getElementById('suggestions').innerHTML = suggestionsHTML;
+        if (data.list.length === 0) {
+            suggestionsElement.innerHTML = '<p>No se encontraron ciudades</p>';
+            return;
+        }
+
+        data.list.forEach(city => {
+            const cityElement = document.createElement('p');
+            cityElement.textContent = `${city.name}, ${city.sys.country}`;
+            cityElement.onclick = () => selectCity(`${city.name}, ${city.sys.country}`);
+            suggestionsElement.appendChild(cityElement);
+        });
+    } catch (error) {
+        document.getElementById('suggestions').innerHTML = '<p>Error al obtener sugerencias</p>';
+        console.error('Error:', error);
+    }
 }
 
-// Función para seleccionar una ciudad del autocompletado
+function debounce(func, delay) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(func, delay);
+}
+
+function handleInput(event) {
+    debounce(() => getCitySuggestions(event.target.value), 300);
+}
+
 function selectCity(city) {
     document.getElementById('city').value = city;
     document.getElementById('suggestions').innerHTML = '';
 }
 
-// Obtener datos del clima
+// Obtener datos del clima con manejo de errores mejorado
 async function getWeather() {
     const city = document.getElementById('city').value;
     if (!city) return alert('Por favor, ingresa una ciudad');
@@ -52,7 +76,6 @@ async function getWeather() {
         const probabilityRain = weatherData.rain ? (weatherData.rain['1h'] || 0) + '%' : '0%';
         const weatherType = weather[0].main;
         
-        // Actualizar el color de fondo según la temperatura
         updateBackground(main.temp);
 
         document.getElementById('weatherInfo').innerHTML = `
@@ -64,30 +87,30 @@ async function getWeather() {
             <p>Presión atmosférica: ${main.pressure} hPa</p>
         `;
 
-        // Obtener previsión de 7 días
         getForecast(coord.lat, coord.lon);
     } catch (error) {
         alert('Error al obtener los datos');
+        console.error('Error:', error);
     }
 }
 
-// Obtener previsión del clima a 7 días
+// Obtener previsión del clima a 7 días con control de errores
 async function getForecast(lat, lon) {
     try {
         const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
         const forecastResponse = await fetch(forecastUrl);
-        const forecastData = await forecastResponse.json();
+        if (!forecastResponse.ok) throw new Error('Error en la solicitud');
 
+        const forecastData = await forecastResponse.json();
         let forecastHTML = '<h3>Previsión 7 días</h3>';
-        let daysShown = new Set(); // Para evitar días repetidos
+        let daysShown = new Set();
 
         forecastData.list.forEach(day => {
             const date = new Date(day.dt * 1000);
             const dayName = date.toLocaleDateString('es-ES', { weekday: 'long' });
 
-            if (!daysShown.has(dayName)) { // Si el día aún no ha sido agregado
+            if (!daysShown.has(dayName)) {
                 daysShown.add(dayName);
-
                 forecastHTML += `
                     <div class="forecast-day">
                         <p>${dayName.charAt(0).toUpperCase() + dayName.slice(1)}</p>
@@ -100,15 +123,15 @@ async function getForecast(lat, lon) {
 
         document.getElementById('forecast').innerHTML = forecastHTML;
     } catch (error) {
-        alert('Error al obtener la previsión del clima');
+        document.getElementById('forecast').innerHTML = '<p>Error al obtener la previsión del clima</p>';
+        console.error('Error:', error);
     }
 }
 
-
 // Cambiar fondo según temperatura
 function updateBackground(temp) {
-    const body = document.getElementById('body');
-
+    const body = document.body;
+    
     if (temp <= 10) {
         body.style.background = 'linear-gradient(to right, #2b5876, #4e4376)';
     } else if (temp > 10 && temp <= 20) {
