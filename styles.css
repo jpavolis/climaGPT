@@ -88,3 +88,25 @@ p {
     font-size: 14px;
 }
 
+/* Contenedor de sugerencias */
+.suggestions {
+    background: rgba(255, 255, 255, 0.1);
+    position: absolute;
+    width: 80%;
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    margin-top: 2px;
+}
+
+.suggestions p {
+    padding: 10px;
+    margin: 0;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.suggestions p:hover {
+    background: rgba(255, 255, 255, 0.2);
+}

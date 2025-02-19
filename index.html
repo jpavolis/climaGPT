@@ -9,7 +9,8 @@
 <body id="body">
     <div class="container">
         <h2>Consulta el Clima</h2>
-        <input type="text" id="city" placeholder="Ingresa una ciudad">
+        <input type="text" id="city" placeholder="Ingresa una ciudad" onkeyup="getCitySuggestions(this.value)">
+        <div class="suggestions" id="suggestions"></div>
         <button onclick="getWeather()">Buscar</button>
         <div class="weather-info" id="weatherInfo"></div>
         <div class="forecast" id="forecast"></div>
